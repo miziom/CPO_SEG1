@@ -65,8 +65,8 @@ int getMinimumOfNeighbours(int **tab, int wightOfImage, int heightOfImage, int p
 int main()
 {
 	int** tab;
-	Mat img = imread("image2.jpg");
-	cv::resize(img, img, img.size() );
+	Mat img = imread("image3.jpg");
+	//cv::resize(img, img, img.size()/9 );
 	cv::cvtColor(img, img, cv::COLOR_BGR2GRAY);
 	cv::threshold(img, img, 100, 255, cv::THRESH_BINARY);
 
@@ -121,22 +121,26 @@ int main()
 		}
 	}
 
-	cv::cvtColor(img, img, cv::COLOR_BGRA2RGBA);
+	//cv::cvtColor(img, img, cv::COLOR_BGRA2RGBA);
+	int guard = 0;
 	int fieldNumber = 1;
 	int counterforNumber = 0;
 	for (int row = 0; row < rows; row++) {
 		for (int col = 0; col < cols; col++) {
 			if (tab[row][col] > counterforNumber) {
-				cv::putText(img, //target image
-					std::to_string(fieldNumber), //text
-					cv::Point(col, row), //top-left position
-					cv::FONT_HERSHEY_DUPLEX,
-					0.5,
-					CV_RGB(0, 255, 0), //font color
-					1);
-				//std::cout << fieldNumber << endl;
-				counterforNumber = tab[row][col];
-				fieldNumber++;
+				if (guard % 2 == 0) {
+					cv::putText(img,
+						std::to_string(fieldNumber), //text
+						cv::Point(col-1, row-1), //position
+						cv::FONT_HERSHEY_SIMPLEX,
+						0.3,
+						CV_RGB(0, 255, 0), //font color
+						1);
+					//std::cout << fieldNumber << endl;
+					counterforNumber = tab[row][col];
+					fieldNumber++;
+				}
+				guard++;
 			}
 		}
 	}
@@ -154,10 +158,10 @@ int main()
 	destroyAllWindows();
 
 	//zwolnienie pamieci dla tabeli
-	for (int i = 0; i < rows; i++) {
-		delete[] tab[i];
-	}
-	delete[] * tab;
+	//for (int i = 0; i < rows; i++) {
+	//	delete[] tab[i];
+	//}
+	//delete[] * tab;
 
 	return 0;
 }
