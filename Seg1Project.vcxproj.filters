@@ -18,5 +18,13 @@
     <ClCompile Include="Seg1Project.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="pass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

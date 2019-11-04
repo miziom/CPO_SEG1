@@ -154,7 +154,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="pass.cpp" />
     <ClCompile Include="Seg1Project.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pass.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
