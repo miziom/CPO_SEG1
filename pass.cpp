@@ -6,12 +6,16 @@
 #include <iomanip>
 #include "pass.h"
 
-int getMinimumOfNeighbours(int** tab, int wightOfImage, int heightOfImage, int posRow, int posCol) {
 
+//method return minimum value from neighbours values
+int getMinimumOfNeighbours(int** tab, int wightOfImage, int heightOfImage, int posRow, int posCol) {
+	//create help table, size equals region of pixel
 	int helpTab[9];
+	//fill with -1
 	for (int col = 0; col < 9; col++) {
 		helpTab[col] = -1;
 	}
+	//set help position
 	int helpTabPosCol = 0;
 	int helpWightOfImage = wightOfImage - 1;
 	int helpHeightOfImage = heightOfImage - 1;
@@ -20,6 +24,7 @@ int getMinimumOfNeighbours(int** tab, int wightOfImage, int heightOfImage, int p
 	int helpPosColMin = posCol - 1;
 	int helpPosColMax = posCol + 1;
 
+	//correction of position if there are out of image
 	if (helpPosRowMin < 0) {
 		helpPosRowMin = 0;
 	}
@@ -32,7 +37,7 @@ int getMinimumOfNeighbours(int** tab, int wightOfImage, int heightOfImage, int p
 	if (helpPosColMax > helpWightOfImage) {
 		helpPosColMax = helpWightOfImage;
 	}
-
+	//copy value from input table to helpTable with neighbours values
 	for (int row = helpPosRowMin; row <= helpPosRowMax; row++) {
 		for (int col = helpPosColMin; col <= helpPosColMax; col++) {
 			helpTab[helpTabPosCol] = tab[row][col];
@@ -40,15 +45,13 @@ int getMinimumOfNeighbours(int** tab, int wightOfImage, int heightOfImage, int p
 		}
 	}
 	int min = -2;
+	//set last value of helTable which is not 0 or -1
 	for (int col = 0; col < 9; col++) {
-		if (helpTab[col] == 0 || helpTab[col] == -1) {
-
-		}
-		else {
+		if (!(helpTab[col] == 0 || helpTab[col] == -1)) {
 			min = helpTab[col];
 		}
 	}
-
+	//find minumum of region
 	for (int col = 0; col < 9; col++) {
 		if (helpTab[col] < min && helpTab[col] != -1 && helpTab[col] != 0) {
 			min = helpTab[col];
@@ -57,6 +60,7 @@ int getMinimumOfNeighbours(int** tab, int wightOfImage, int heightOfImage, int p
 	return min;
 }
 
+//create empty table
 int** tableCreating(int rows, int cols) {
 
 	int** tab = new int* [rows];
@@ -109,7 +113,6 @@ void topDownPass(int**& tab, int rows, int cols) {
 			}
 		}
 	}
-
 }
 
 //BottomUp pass
@@ -122,30 +125,41 @@ void bottomUpPass(int**& tab, int rows, int cols) {
 			}
 		}
 	}
-
 }
 
-void numberAreas(cv::Mat img, int** tab, int rows, int cols) {
-
-	int guard = 0;
-	int fieldNumber = 1;
-	int counterforNumber = 0;
+//change numbers from each "value" to "guard+1" in table
+void changeNumber(int** &table, int rows, int cols, int value, int guard) {
 	for (int row = 0; row < rows; row++) {
 		for (int col = 0; col < cols; col++) {
-			if (tab[row][col] > counterforNumber) {
-				if (guard % 2 == 0) {
-					cv::putText(img,
-						std::to_string(fieldNumber), //text
-						cv::Point(col - 1, row - 1), //position
-						cv::FONT_HERSHEY_SIMPLEX,
-						0.3,
-						CV_RGB(0, 255, 0), //font color
-						1);
-					counterforNumber = tab[row][col];
-					fieldNumber++;
-				}
+			if (table[row][col] == value) {
+				table[row][col] = guard+1;
+			}
+		}
+	}
+}
+
+//number fields from 1 to X (same value for whole field)
+void reNumberTable(int**& table, int rows, int cols) {
+	int guard = 0;
+	for (int row = 0; row < rows; row++) {
+		for (int col = 0; col < cols; col++) {
+			if (table[row][col] > guard) {
+				changeNumber(table, rows, cols, table[row][col], guard);
 				guard++;
 			}
+		}
+	}
+}
+
+//mark areas with grayscale value
+void markAreas(cv::Mat img, int** tab, int rows, int cols) {
+	reNumberTable(tab, rows, cols);
+	int guard = 0;
+	for (int row = 0; row < rows; row++) {
+		for (int col = 0; col < cols; col++) {
+			if (tab[row][col] != 0) {
+				img.at<unsigned char>(row, col) = (tab[row][col] * 15);
+			} 
 		}
 	}
 }
