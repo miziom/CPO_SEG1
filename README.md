@@ -3,3 +3,4 @@ Algorithm top-down, bottom-up implementation. Program works on binary images. Ap
 
 **Technologies used:** 
 - C++
+- OpenCV Library
